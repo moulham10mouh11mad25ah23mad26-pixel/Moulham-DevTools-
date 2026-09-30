@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moulham DevTools - أدوات المطورين الاحترافية</title>
+    <style>
+        :root {
+            --bg-color: #080B12;
+            --card-bg: #121824;
+            --border-color: #1E293B;
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+            --accent-blue: #3B82F6;
+            --accent-cyan: #06B6D4;
+            --accent-purple: #8B5CF6;
+            --glow-shadow: rgba(6, 182, 212, 0.25);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #F8FAFC;
+            --card-bg: #FFFFFF;
+            --border-color: #E2E8F0;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --accent-blue: #2563EB;
+            --accent-cyan: #0891B2;
+            --accent-purple: #7C3AED;
+            --glow-shadow: rgba(8, 145, 178, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px var(--glow-shadow);
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .modern-logo-svg {
+            width: 50px;
+            height: 50px;
+            filter: drop-shadow(0 0 8px var(--accent-cyan));
+        }
+
+        .brand-info h1 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            color: var(--text-main);
+        }
+
+        .brand-info p {
+            font-size: 0.75rem;
+            color: var(--accent-cyan);
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .controls-group {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .control-btn {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .control-btn:hover {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 10px var(--glow-shadow);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2.5rem 1rem;
+            width: 100%;
+            flex: 1;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero h2 {
+            font-size: 2.3rem;
+            margin-bottom: 0.75rem;
+            background: linear-gradient(135deg, var(--text-main), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+
+        .search-box {
+            width: 100%;
+            max-width: 550px;
+            margin: 0 auto 2.5rem auto;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 0.85rem 1.2rem;
+            border-radius: 0.75rem;
+            color: var(--text-main);
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 15px var(--glow-shadow);
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .tool-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .tool-card:hover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px var(--glow-shadow);
+        }
+
+        .tool-card h3 {
+            font-size: 1.15rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tool-card p {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            margin-bottom: 1.2rem;
+            line-height: 1.5;
+        }
+
+        .badge {
+            align-self: flex-start;
+            background: rgba(6, 182, 212, 0.1);
+            color: var(--accent-cyan);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        .workspace {
+            display: none;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 10px 30px var(--glow-shadow);
+        }
+
+        .workspace.active {
+            display: block;
+        }
+
+        .back-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .back-btn:hover {
+            color: var(--text-main);
+            border-color: var(--accent-cyan);
+        }
+
+        textarea, input[type="text"] {
+            width: 100%;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            margin-bottom: 1rem;
+            outline: none;
+        }
+
+        textarea:focus, input:focus {
+            border-color: var(--accent-cyan);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        button.action-btn {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        button.action-btn:hover {
+            opacity: 0.9;
+        }
+
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 2.5rem 1rem;
+            background: var(--card-bg);
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.2rem;
+            text-align: center;
+        }
+
+        .footer-badge-box {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(6, 182, 212, 0.08);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            color: var(--accent-cyan);
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .footer-quote {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-style: italic;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .footer-signature {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .footer-signature span {
+            color: var(--accent-cyan);
+        }
+
+        @media (max-width: 640px) {
+            header {
+                padding: 1rem;
+                gap: 1rem;
+            }
+
+            .brand-info p {
+                font-size: 0.65rem;
+            }
+
+            .modern-logo-svg {
+                width: 42px;
+                height: 42px;
+            }
+
+            .controls-group {
+                gap: 0.4rem;
+            }
+
+            .control-btn {
+                padding: 0.45rem 0.65rem;
+                font-size: 0.75rem;
+            }
+
+            .hero h2 {
+                font-size: 1.8rem;
+            }
+
+            .workspace {
+                padding: 1rem;
+            }
+
+            .btn-group {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <header>
+        <div class="brand-container">
+            <svg class="modern-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="46" stroke="url(#paint0_linear)" stroke-width="4" stroke-dasharray="6 4"/>
+                <path d="M30 65L45 35L55 55L70 35" stroke="url(#paint1_linear)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="45" cy="35" r="4" fill="#06B6D4"/>
+                <circle cx="70" cy="35" r="4" fill="#3B82F6"/>
+                <defs>
+                    <linearGradient id="paint0_linear" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#06B6D4"/>
+                        <stop offset="1" stop-color="#8B5CF6"/>
+                    </linearGradient>
+                    <linearGradient id="paint1_linear" x1="30" y1="35" x2="70" y2="65" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#3B82F6"/>
+                        <stop offset="1" stop-color="#06B6D4"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <div class="brand-info">
+                <h1>Moulham Ahmad</h1>
+                <p>Web | App Development</p>
+            </div>
+        </div>
+        <div class="controls-group">
+            <button class="control-btn" id="lang-toggle-btn" onclick="toggleLanguage()">English</button>
+            <button class="control-btn" id="theme-toggle-btn" onclick="toggleTheme()">☀️ فاتح</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="main-view">
+            <div class="hero">
+                <h2 id="hero-title">أدوات المطورين. ببساطة.</h2>
+                <p id="hero-desc">أدوات سريعة ومجانية تعمل محلياً بالكامل في متصفحك مع أولوية قصوى للخصوصية.</p>
+            </div>
+
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="ابحث عن أداة (JSON, Base64, Hash...)" oninput="filterTools()">
+            </div>
+
+            <div class="tools-grid" id="tools-grid">
+                <div class="tool-card" onclick="openTool('json')">
+                    <div>
+                        <h3 class="t-json-title">JSON Formatter</h3>
+                        <p class="t-json-desc">تنسيق، ترتيب وفحص ملفات الـ JSON بسهولة.</p>
+                    </div>
+                    <span class="badge">Formatter</span>
+                </div>
+
+                <div class="tool-card" onclick="openTool('base64')">
+                    <div>
+                        <h3 class="t-b64-title">Base64 Encoder / Decoder</h3>
+                        <p class="t-b64-desc">تشفير وفك تشفير نصوص الـ Base64 بسرعة.</p>
+                    </div>
+                    <span class="badge">Encoder</span>
+                </div>
+
+                <div class="tool-card" onclick="openTool('url')">
+                    <div>
+                        <h3 class="t-url-title">URL Encoder / Decoder</h3>
+                        <p class="t-url-desc">ترميز وفك ترميز الروابط والنصوص الخاصة بالويب.</p>
+                    </div>
+                    <span class="badge">Web</span>
+                </div>
+
+                <div class="tool-card" onclick="openTool('hash')">
+                    <div>
+                        <h3 class="t-hash-title">Hash Generator (MD5 / SHA)</h3>
+                        <p class="t-hash-desc">توليد التشفيرات البصمية للنصوص بأمان تام.</p>
+                    </div>
+                    <span class="badge">Security</span>
+                </div>
+
+                <div class="tool-card" onclick="openTool('html')">
+                    <div>
+                        <h3 class="t-html-title">HTML Entities Converter</h3>
+                        <p class="t-html-desc">تحويل الرموز الخاصة لكيان HTML والعكس.</p>
+                    </div>
+                    <span class="badge">HTML</span>
+                </div>
+
+                <div class="tool-card" onclick="openTool('uuid')">
+                    <div>
+                        <h3 class="t-uuid-title">UUID Generator</h3>
+                        <p class="t-uuid-desc">توليد معرفات فريدة من نوعها UUID v4.</p>
+                    </div>
+                    <span class="badge">Generator</span>
+                </div>
+
+                <div class="tool-card" onclick="openTool('pass')">
+                    <div>
+                        <h3 class="t-pass-title">Password Generator</h3>
+                        <p class="t-pass-desc">إنشاء كلمات مرور قوية وآمنة للمطورين.</p>
+                    </div>
+                    <span class="badge">Security</span>
+                </div>
+
+                <div class="tool-card" onclick="openTool('timestamp')">
+                    <div>
+                        <h3 class="t-ts-title">Unix Timestamp Converter</h3>
+                        <p class="t-ts-desc">تحويل التواريخ إلى أختام زمنية والعكس.</p>
+                    </div>
+                    <span class="badge">Time</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="workspace-view" class="workspace">
+            <button class="back-btn" id="back-btn-text" onclick="closeTool()">← العودة للأدوات</button>
+            <h2 id="tool-title" style="margin-bottom: 1rem;">اسم الأداة</h2>
+            <div id="tool-content"></div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-badge-box">
+                ⚡ Client-Side Power • Zero Data Leaves Your Browser
+            </div>
+            <p class="footer-quote" id="footer-quote">
+                "البرمجة ليست مجرد كتابة أسطر كود، بل هي فن صناعة الحلول وتسهيل حياة المطورين."
+            </p>
+            <div class="footer-signature">
+                Crafted with <span style="color:#EF4444;">❤️</span> & <span style="color:var(--accent-cyan);">Code</span> by <span>Moulham Ahmad</span> © 2026
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let currentLang = 'ar';
+        let currentTheme = 'dark';
+
+        const translations = {
+            ar: {
+                searchPlaceholder: "ابحث عن أداة (JSON, Base64, Hash...)",
+                heroTitle: "أدوات المطورين. ببساطة.",
+                heroDesc: "أدوات سريعة ومجانية تعمل محلياً بالكامل في متصفحك مع أولوية قصوى للخصوصية.",
+                backBtn: "← العودة للأدوات",
+                footerQuote: "\"البرمجة ليست مجرد كتابة أسطر كود، بل هي فن صناعة الحلول وتسهيل حياة المطورين.\"",
+                themeLight: "☀️ فاتح",
+                themeDark: "🌙 داكن",
+                tools: {
+                    json: { title: "JSON Formatter", desc: "تنسيق، ترتيب وفحص ملفات الـ JSON بسهولة." },
+                    base64: { title: "Base64 Encoder / Decoder", desc: "تشفير وفك تشفير نصوص الـ Base64 بسرعة." },
+                    url: { title: "URL Encoder / Decoder", desc: "ترميز وفك ترميز الروابط والنصوص الخاصة بالويب." },
+                    hash: { title: "Hash Generator (MD5 / SHA)", desc: "توليد التشفيرات البصمية للنصوص بأمان تام." },
+                    html: { title: "HTML Entities Converter", desc: "تحويل الرموز الخاصة لكيان HTML والعكس." },
+                    uuid: { title: "UUID Generator", desc: "توليد معرفات فريدة من نوعها UUID v4." },
+                    pass: { title: "Password Generator", desc: "إنشاء كلمات مرور قوية وآمنة للمطورين." },
+                    timestamp: { title: "Unix Timestamp Converter", desc: "تحويل التواريخ إلى أختام زمنية والعكس." }
+                }
+            },
+            en: {
+                searchPlaceholder: "Search tool (JSON, Base64, Hash...)",
+                heroTitle: "Developer Tools. Simplified.",
+                heroDesc: "Fast and free tools running entirely client-side in your browser with ultimate privacy.",
+                backBtn: "← Back to Tools",
+                footerQuote: "\"Programming is not just writing code; it's the art of engineering solutions and empowering developers.\"",
+                themeLight: "☀️ Light",
+                themeDark: "🌙 Dark",
+                tools: {
+                    json: { title: "JSON Formatter", desc: "Format, validate and prettify JSON data easily." },
+                    base64: { title: "Base64 Encoder / Decoder", desc: "Encode and decode Base64 strings quickly." },
+                    url: { title: "URL Encoder / Decoder", desc: "Encode and decode URLs and web queries." },
+                    hash: { title: "Hash Generator (MD5 / SHA)", desc: "Generate secure cryptographic hashes for text." },
+                    html: { title: "HTML Entities Converter", desc: "Convert special characters to HTML entities and back." },
+                    uuid: { title: "UUID Generator", desc: "Generate unique identifiers UUID v4." },
+                    pass: { title: "Password Generator", desc: "Generate strong and secure passwords for developers." },
+                    timestamp: { title: "Unix Timestamp Converter", desc: "Convert dates to timestamps and vice versa." }
+                }
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            const root = document.getElementById('html-root');
+            root.setAttribute('lang', currentLang);
+            root.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+
+            document.getElementById('lang-toggle-btn').innerText = currentLang === 'ar' ? 'English' : 'العربية';
+            document.getElementById('search-input').placeholder = translations[currentLang].searchPlaceholder;
+            document.getElementById('hero-title').innerText = translations[currentLang].heroTitle;
+            document.getElementById('hero-desc').innerText = translations[currentLang].heroDesc;
+            document.getElementById('back-btn-text').innerText = translations[currentLang].backBtn;
+            document.getElementById('footer-quote').innerText = translations[currentLang].footerQuote;
+
+            const t = translations[currentLang].tools;
+            document.querySelector('.t-json-title').innerText = t.json.title;
+            document.querySelector('.t-json-desc').innerText = t.json.desc;
+            document.querySelector('.t-b64-title').innerText = t.base64.title;
+            document.querySelector('.t-b64-desc').innerText = t.base64.desc;
+            document.querySelector('.t-url-title').innerText = t.url.title;
+            document.querySelector('.t-url-desc').innerText = t.url.desc;
+            document.querySelector('.t-hash-title').innerText = t.hash.title;
+            document.querySelector('.t-hash-desc').innerText = t.hash.desc;
+            document.querySelector('.t-html-title').innerText = t.html.title;
+            document.querySelector('.t-html-desc').innerText = t.html.desc;
+            document.querySelector('.t-uuid-title').innerText = t.uuid.title;
+            document.querySelector('.t-uuid-desc').innerText = t.uuid.desc;
+            document.querySelector('.t-pass-title').innerText = t.pass.title;
+            document.querySelector('.t-pass-desc').innerText = t.pass.desc;
+            document.querySelector('.t-ts-title').innerText = t.timestamp.title;
+            document.querySelector('.t-ts-desc').innerText = t.timestamp.desc;
+
+            document.getElementById('theme-toggle-btn').innerText =
+                currentTheme === 'light' ? translations[currentLang].themeDark : translations[currentLang].themeLight;
+        }
+
+        function toggleTheme() {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', currentTheme);
+            const btn = document.getElementById('theme-toggle-btn');
+            btn.innerText = currentTheme === 'light'
+                ? translations[currentLang].themeDark
+                : translations[currentLang].themeLight;
+        }
+
+        function filterTools() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const cards = document.querySelectorAll('.tool-card');
+            cards.forEach(card => {
+                const text = card.innerText.toLowerCase();
+                card.style.display = text.includes(query) ? 'flex' : 'none';
+            });
+        }
+
+        function openTool(toolName) {
+            document.getElementById('main-view').style.display = 'none';
+            const workspace = document.getElementById('workspace-view');
+            workspace.classList.add('active');
+
+            const titleEl = document.getElementById('tool-title');
+            const contentEl = document.getElementById('tool-content');
+            const t = translations[currentLang].tools;
+
+            if (toolName === 'json') {
+                titleEl.innerText = t.json.title;
+                contentEl.innerHTML = `
+                    <textarea id="json-input" rows="6" placeholder="${currentLang === 'ar' ? 'الصق كود الـ JSON هنا...' : 'Paste JSON here...'}"></textarea>
+                    <div class="btn-group">
+                        <button class="action-btn" onclick="formatJson(true)">${currentLang === 'ar' ? 'تنسيق (Pretty)' : 'Format'}</button>
+                        <button class="action-btn" onclick="formatJson(false)" style="background:var(--accent-purple)">${currentLang === 'ar' ? 'تصغير (Minify)' : 'Minify'}</button>
+                    </div>
+                    <textarea id="json-output" rows="6" placeholder="${currentLang === 'ar' ? 'النتيجة...' : 'Result...'}" readonly></textarea>
+                `;
+            } else if (toolName === 'base64') {
+                titleEl.innerText = t.base64.title;
+                contentEl.innerHTML = `
+                    <textarea id="b64-input" rows="6" placeholder="${currentLang === 'ar' ? 'أدخل النص هنا...' : 'Enter text here...'}"></textarea>
+                    <div class="btn-group">
+                        <button class="action-btn" onclick="b64Encode()">${currentLang === 'ar' ? 'تشفير' : 'Encode'}</button>
+                        <button class="action-btn" onclick="b64Decode()" style="background:var(--accent-cyan); color:#000;">${currentLang === 'ar' ? 'فك تشفير' : 'Decode'}</button>
+                    </div>
+                    <textarea id="b64-output" rows="6" placeholder="${currentLang === 'ar' ? 'النتيجة...' : 'Result...'}" readonly></textarea>
+                `;
+            } else if (toolName === 'url') {
+                titleEl.innerText = t.url.title;
+                contentEl.innerHTML = `
+                    <textarea id="url-input" rows="6" placeholder="${currentLang === 'ar' ? 'أدخل الرابط أو النص هنا...' : 'Enter URL here...'}"></textarea>
+                    <div class="btn-group">
+                        <button class="action-btn" onclick="urlEncode()">${currentLang === 'ar' ? 'ترميز (Encode)' : 'Encode'}</button>
+                        <button class="action-btn" onclick="urlDecode()" style="background:var(--accent-cyan); color:#000;">${currentLang === 'ar' ? 'فك ترميز (Decode)' : 'Decode'}</button>
+                    </div>
+                    <textarea id="url-output" rows="6" placeholder="${currentLang === 'ar' ? 'النتيجة...' : 'Result...'}" readonly></textarea>
+                `;
+            } else if (toolName === 'hash') {
+                titleEl.innerText = t.hash.title;
+                contentEl.innerHTML = `
+                    <textarea id="hash-input" rows="5" placeholder="${currentLang === 'ar' ? 'أدخل النص لتوليد البصمة...' : 'Enter text to hash...'}" oninput="generateHashes()"></textarea>
+                    <p style="margin-bottom:0.5px; font-weight:700; color:var(--accent-cyan);">SHA-256:</p>
+                    <input type="text" id="sha256-output" readonly style="font-size:0.9rem;">
+                    <p style="margin-bottom:0.5px; font-weight:700; color:var(--accent-blue);">SHA-1:</p>
+                    <input type="text" id="sha1-output" readonly style="font-size:0.9rem;">
+                `;
+            } else if (toolName === 'html') {
+                titleEl.innerText = t.html.title;
+                contentEl.innerHTML = `
+                    <textarea id="html-input" rows="6" placeholder="${currentLang === 'ar' ? 'أدخل كود HTML أو النص...' : 'Enter HTML or text...'}"></textarea>
+                    <div class="btn-group">
+                        <button class="action-btn" onclick="htmlEncode()">${currentLang === 'ar' ? 'ترميز الكيان (Encode)' : 'Encode'}</button>
+                        <button class="action-btn" onclick="htmlDecode()" style="background:var(--accent-cyan); color:#000;">${currentLang === 'ar' ? 'فك الترميز (Decode)' : 'Decode'}</button>
+                    </div>
+                    <textarea id="html-output" rows="6" placeholder="${currentLang === 'ar' ? 'النتيجة...' : 'Result...'}" readonly></textarea>
+                `;
+            } else if (toolName === 'uuid') {
+                titleEl.innerText = t.uuid.title;
+                contentEl.innerHTML = `
+                    <button class="action-btn" onclick="generateUUID()">${currentLang === 'ar' ? 'توليد UUID جديد' : 'Generate New UUID'}</button>
+                    <input type="text" id="uuid-output" readonly style="margin-top:1rem; font-size:1.1rem; text-align:center;">
+                `;
+                generateUUID();
+            } else if (toolName === 'pass') {
+                titleEl.innerText = t.pass.title;
+                contentEl.innerHTML = `
+                    <input type="text" id="pass-output" readonly style="font-size:1.1rem; text-align:center;">
+                    <button class="action-btn" onclick="generatePassword()">${currentLang === 'ar' ? 'توليد كلمة مرور قوية' : 'Generate Strong Password'}</button>
+                `;
+                generatePassword();
+            } else if (toolName === 'timestamp') {
+                titleEl.innerText = t.timestamp.title;
+                contentEl.innerHTML = `
+                    <button class="action-btn" onclick="getCurrentTimestamp()">${currentLang === 'ar' ? 'الحصول على وقت النظام الحالي' : 'Get Current Timestamp'}</button>
+                    <input type="text" id="ts-output" readonly style="margin-top:1rem; font-size:1.1rem; text-align:center;" placeholder="Unix Timestamp">
+                `;
+                getCurrentTimestamp();
+            }
+        }
+
+        function closeTool() {
+            document.getElementById('workspace-view').classList.remove('active');
+            document.getElementById('main-view').style.display = 'block';
+        }
+
+        function formatJson(pretty) {
+            try {
+                const val = document.getElementById('json-input').value;
+                const obj = JSON.parse(val);
+                document.getElementById('json-output').value = pretty
+                    ? JSON.stringify(obj, null, 4)
+                    : JSON.stringify(obj);
+            } catch (e) {
+                document.getElementById('json-output').value = 'Error: ' + e.message;
+            }
+        }
+
+        function b64Encode() {
+            try {
+                const val = document.getElementById('b64-input').value;
+                document.getElementById('b64-output').value =
+                    btoa(unescape(encodeURIComponent(val)));
+            } catch (e) {
+                document.getElementById('b64-output').value = 'Encoding Error';
+            }
+        }
+
+        function b64Decode() {
+            try {
+                const val = document.getElementById('b64-input').value;
+                document.getElementById('b64-output').value =
+                    decodeURIComponent(escape(atob(val)));
+            } catch (e) {
+                document.getElementById('b64-output').value = 'Decoding Error / Invalid Base64';
+            }
+        }
+
+        function urlEncode() {
+            try {
+                const val = document.getElementById('url-input').value;
+                document.getElementById('url-output').value = encodeURIComponent(val);
+            } catch (e) {
+                document.getElementById('url-output').value = 'Error';
+            }
+        }
+
+        function urlDecode() {
+            try {
+                const val = document.getElementById('url-input').value;
+                document.getElementById('url-output').value = decodeURIComponent(val);
+            } catch (e) {
+                document.getElementById('url-output').value = 'Decoding Error';
+            }
+        }
+
+        async function generateHashes() {
+            const text = document.getElementById('hash-input').value;
+            if (!text) {
+                document.getElementById('sha256-output').value = '';
+                document.getElementById('sha1-output').value = '';
+                return;
+            }
+
+            const encoder = new TextEncoder();
+            const data = encoder.encode(text);
+
+            const hashBuffer256 = await crypto.subtle.digest('SHA-256', data);
+            const hashArray256 = Array.from(new Uint8Array(hashBuffer256));
+            const hashHex256 = hashArray256
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+            document.getElementById('sha256-output').value = hashHex256;
+
+            const hashBuffer1 = await crypto.subtle.digest('SHA-1', data);
+            const hashArray1 = Array.from(new Uint8Array(hashBuffer1));
+            const hashHex1 = hashArray1
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+            document.getElementById('sha1-output').value = hashHex1;
+        }
+
+        function htmlEncode() {
+            const val = document.getElementById('html-input').value;
+            const div = document.createElement('div');
+            div.innerText = val;
+            document.getElementById('html-output').value = div.innerHTML;
+        }
+
+        function htmlDecode() {
+            const val = document.getElementById('html-input').value;
+            const doc = new DOMParser().parseFromString(val, 'text/html');
+            document.getElementById('html-output').value = doc.documentElement.textContent;
+        }
+
+        function generateUUID() {
+            const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+            document.getElementById('uuid-output').value = uuid;
+        }
+
+        function generatePassword() {
+            const chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+";
+            let pass = "";
+            for (let i = 0; i < 16; i++) {
+                pass += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('pass-output').value = pass;
+        }
+
+        function getCurrentTimestamp() {
+            const now = Math.floor(Date.now() / 1000);
+            document.getElementById('ts-output').value =
+                now + ' (UTC: ' + new Date().toUTCString() + ')';
+        }
+    </script>
+</body>
+</html>
